@@ -49,23 +49,22 @@ export const useCartStore = create<CartStore>()(
       // ── Acciones ───────────────────────────────────────────────
       addItem: (product, quantity = 1) => {
         set((state) => {
+          // Usar itemId (UUID único) como identificador — id es el PK de DynamoDB y no es único por producto
           const existingItem = state.items.find(
-            (item) => item.product.id === product.id
+            (item) => item.product.itemId === product.itemId
           );
 
           if (existingItem) {
-            // Incrementar cantidad si ya existe
             return {
               items: state.items.map((item) =>
-                item.product.id === product.id
+                item.product.itemId === product.itemId
                   ? { ...item, quantity: item.quantity + quantity }
                   : item
               ),
-              isOpen: true, // Abrir carrito al agregar
+              isOpen: true,
             };
           }
 
-          // Agregar nuevo item
           return {
             items: [...state.items, { product, quantity }],
             isOpen: true,
@@ -75,7 +74,7 @@ export const useCartStore = create<CartStore>()(
 
       removeItem: (productId) => {
         set((state) => ({
-          items: state.items.filter((item) => item.product.id !== productId),
+          items: state.items.filter((item) => item.product.itemId !== productId),
         }));
       },
 
@@ -87,7 +86,7 @@ export const useCartStore = create<CartStore>()(
 
         set((state) => ({
           items: state.items.map((item) =>
-            item.product.id === productId ? { ...item, quantity } : item
+            item.product.itemId === productId ? { ...item, quantity } : item
           ),
         }));
       },

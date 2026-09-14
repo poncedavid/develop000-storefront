@@ -15,43 +15,49 @@ import { AddToCartButton } from './add-to-cart-button';
 import { publicQuery } from '@/lib/graphql/client';
 import { LISTAR_PRODUCTOS } from '@/lib/graphql/queries';
 import { formatPrice, calculateDiscount } from '@/lib/utils/format';
+import {
+  COMPANY_ID,
+  REVALIDATE_PRODUCTS,
+  PAGE_SIZE_CATALOG,
+  PAGE_SIZE_RELATED,
+} from '@/lib/config';
 import type { ProductListResponse, Product } from '@/types';
 
-const COMPANY_ID = 'develop000';
-
-export const revalidate = 60;
+export const revalidate = REVALIDATE_PRODUCTS;
 
 interface ProductPageProps {
   params: Promise<{ slug: string }>;
 }
 
-// Generar páginas estáticas para los productos existentes
-export async function generateStaticParams() {
+/**
+ * Carga todos los productos activos en una sola llamada.
+ * Se reutiliza en generateStaticParams, getProduct y getRelatedProducts
+ * gracias al cache de Next.js (misma URL + variables = mismo cache hit).
+ */
+async function getAllActiveProducts(): Promise<Product[]> {
   try {
     const data = await publicQuery<{ listarProductos: ProductListResponse }>(
       LISTAR_PRODUCTOS,
-      { companyId: COMPANY_ID, limit: 100 },
-      3600 // Cache por 1 hora para build
+      { companyId: COMPANY_ID, limit: PAGE_SIZE_CATALOG },
+      REVALIDATE_PRODUCTS
     );
-
-    return data.listarProductos.items
-      .filter((p) => p.activo)
-      .map((product) => ({
-        slug: product.slug || product.itemId,
-      }));
+    return data.listarProductos.items.filter((p) => p.activo);
   } catch {
     return [];
   }
 }
 
-// Generar metadata dinámico para SEO
+export async function generateStaticParams() {
+  const products = await getAllActiveProducts();
+  return products.map((p) => ({ slug: p.slug || p.itemId }));
+}
+
 export async function generateMetadata({ params }: ProductPageProps) {
   const { slug } = await params;
-  const product = await getProduct(slug);
+  const products = await getAllActiveProducts();
+  const product = products.find((p) => p.slug === slug || p.itemId === slug);
 
-  if (!product) {
-    return { title: 'Producto no encontrado' };
-  }
+  if (!product) return { title: 'Producto no encontrado' };
 
   return {
     title: `${product.nombre} | develop000`,
@@ -64,50 +70,6 @@ export async function generateMetadata({ params }: ProductPageProps) {
   };
 }
 
-async function getProduct(slug: string): Promise<Product | null> {
-  try {
-    const data = await publicQuery<{ listarProductos: ProductListResponse }>(
-      LISTAR_PRODUCTOS,
-      { companyId: COMPANY_ID, limit: 100 },
-      60
-    );
-
-    // Buscar por slug o itemId
-    const product = data.listarProductos.items.find(
-      (p) => p.slug === slug || p.itemId === slug
-    );
-
-    return product && product.activo ? product : null;
-  } catch {
-    return null;
-  }
-}
-
-async function getRelatedProducts(
-  product: Product,
-  limit = 4
-): Promise<Product[]> {
-  try {
-    const data = await publicQuery<{ listarProductos: ProductListResponse }>(
-      LISTAR_PRODUCTOS,
-      { companyId: COMPANY_ID, limit: 20 },
-      60
-    );
-
-    // Filtrar productos de la misma categoría (excluyendo el actual)
-    return data.listarProductos.items
-      .filter(
-        (p) =>
-          p.activo &&
-          p.id !== product.id &&
-          p.categoriaId === product.categoriaId
-      )
-      .slice(0, limit);
-  } catch {
-    return [];
-  }
-}
-
 const benefits = [
   { icon: Truck, text: 'Envío gratis sobre $50.000' },
   { icon: Shield, text: 'Garantía de satisfacción' },
@@ -116,20 +78,24 @@ const benefits = [
 
 export default async function ProductPage({ params }: ProductPageProps) {
   const { slug } = await params;
-  const product = await getProduct(slug);
 
-  if (!product) {
-    notFound();
-  }
+  // Una sola llamada — Next.js deduplica automáticamente gracias al cache
+  const allProducts = await getAllActiveProducts();
+  const product = allProducts.find((p) => p.slug === slug || p.itemId === slug);
 
-  const relatedProducts = await getRelatedProducts(product);
+  if (!product) notFound();
+
+  // Relacionados: misma categoría, excluye el actual, máximo PAGE_SIZE_RELATED
+  const relatedProducts = allProducts
+    .filter((p) => p.itemId !== product.itemId && p.categoriaId === product.categoriaId)
+    .slice(0, PAGE_SIZE_RELATED);
+
   const discount = product.precioComparar
     ? calculateDiscount(product.precio, product.precioComparar)
     : 0;
 
   const isOutOfStock = product.stock !== undefined && product.stock <= 0;
-  const isLowStock =
-    product.stock !== undefined && product.stock > 0 && product.stock <= 5;
+  const isLowStock   = product.stock !== undefined && product.stock > 0 && product.stock <= 5;
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -237,7 +203,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
             {relatedProducts.map((related) => (
               <Link
-                key={related.id}
+                key={related.itemId}
                 href={`/productos/${related.slug || related.itemId}`}
               >
                 <Card className="overflow-hidden hover:shadow-md transition-shadow">

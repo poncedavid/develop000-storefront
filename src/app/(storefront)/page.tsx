@@ -10,20 +10,23 @@ import { Card, CardContent } from '@/components/ui/card';
 import { ProductGrid } from '@/components/products/product-grid';
 import { publicQuery } from '@/lib/graphql/client';
 import { LISTAR_PRODUCTOS, LISTAR_CATEGORIAS } from '@/lib/graphql/queries';
+import {
+  COMPANY_ID,
+  REVALIDATE_PRODUCTS,
+  REVALIDATE_CATEGORIES,
+  PAGE_SIZE_HOME,
+  PAGE_SIZE_CATEGORIES,
+} from '@/lib/config';
 import type { ProductListResponse, CategoryListResponse, Product, Category } from '@/types';
 
-// Configuración de la empresa (después mover a env o config)
-const COMPANY_ID = 'develop000';
-
-// Revalidar cada 60 segundos (ISR)
-export const revalidate = 60;
+export const revalidate = REVALIDATE_PRODUCTS;
 
 async function getProducts(): Promise<Product[]> {
   try {
     const data = await publicQuery<{ listarProductos: ProductListResponse }>(
       LISTAR_PRODUCTOS,
-      { companyId: COMPANY_ID, limit: 10 },
-      60
+      { companyId: COMPANY_ID, limit: PAGE_SIZE_HOME },
+      REVALIDATE_PRODUCTS
     );
     return data.listarProductos.items.filter((p) => p.activo);
   } catch (error) {
@@ -36,8 +39,8 @@ async function getCategories(): Promise<Category[]> {
   try {
     const data = await publicQuery<{ listarCategorias: CategoryListResponse }>(
       LISTAR_CATEGORIAS,
-      { companyId: COMPANY_ID, limit: 8 },
-      60
+      { companyId: COMPANY_ID, limit: PAGE_SIZE_CATEGORIES },
+      REVALIDATE_CATEGORIES
     );
     return data.listarCategorias.items.filter((c) => c.activo);
   } catch (error) {
@@ -157,7 +160,7 @@ export default async function HomePage() {
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
             {categories.slice(0, 8).map((category) => (
               <Link
-                key={category.id}
+                key={category.itemId}
                 href={`/categorias/${category.slug || category.itemId}`}
               >
                 <Card className="group overflow-hidden hover:shadow-md transition-shadow">

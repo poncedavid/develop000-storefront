@@ -8,11 +8,15 @@ import { ProductGrid } from '@/components/products/product-grid';
 import { ProductFilters } from './product-filters';
 import { publicQuery } from '@/lib/graphql/client';
 import { LISTAR_PRODUCTOS, LISTAR_CATEGORIAS } from '@/lib/graphql/queries';
+import {
+  COMPANY_ID,
+  REVALIDATE_PRODUCTS,
+  REVALIDATE_CATEGORIES,
+  PAGE_SIZE_CATALOG,
+} from '@/lib/config';
 import type { ProductListResponse, CategoryListResponse, Product, Category } from '@/types';
 
-const COMPANY_ID = 'develop000';
-
-export const revalidate = 60;
+export const revalidate = REVALIDATE_PRODUCTS;
 
 export const metadata = {
   title: 'Productos | develop000',
@@ -33,8 +37,8 @@ async function getProducts(): Promise<Product[]> {
   try {
     const data = await publicQuery<{ listarProductos: ProductListResponse }>(
       LISTAR_PRODUCTOS,
-      { companyId: COMPANY_ID, limit: 50 },
-      60
+      { companyId: COMPANY_ID, limit: PAGE_SIZE_CATALOG },
+      REVALIDATE_PRODUCTS
     );
     return data.listarProductos.items.filter((p) => p.activo);
   } catch (error) {
@@ -48,7 +52,7 @@ async function getCategories(): Promise<Category[]> {
     const data = await publicQuery<{ listarCategorias: CategoryListResponse }>(
       LISTAR_CATEGORIAS,
       { companyId: COMPANY_ID, limit: 20 },
-      60
+      REVALIDATE_CATEGORIES
     );
     return data.listarCategorias.items.filter((c) => c.activo);
   } catch (error) {

@@ -139,7 +139,7 @@ export function ProductFilters({ categories }: ProductFiltersProps) {
               </button>
               {categories.map((category) => (
                 <button
-                  key={category.id}
+                  key={category.itemId}
                   onClick={() =>
                     updateParams(
                       'categoria',
