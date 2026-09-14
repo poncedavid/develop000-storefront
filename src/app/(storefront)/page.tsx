@@ -90,7 +90,7 @@ export default async function HomePage() {
         <div className="container mx-auto px-4 py-16 md:py-24">
           <div className="grid gap-8 md:grid-cols-2 md:items-center">
             <div className="space-y-6">
-              <h1 className="text-4xl font-bold tracking-tight md:text-5xl lg:text-6xl">
+              <h1 className="text-3xl font-bold tracking-tight md:text-4xl lg:text-5xl xl:text-6xl">
                 Descubre productos{' '}
                 <span className="text-primary">increíbles</span>
               </h1>
@@ -126,7 +126,7 @@ export default async function HomePage() {
           ═══════════════════════════════════════════════════════════ */}
       <section className="border-y bg-muted/30">
         <div className="container mx-auto px-4 py-8">
-          <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-4">
             {benefits.map((benefit) => (
               <div key={benefit.title} className="flex items-center gap-3">
                 <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary flex-shrink-0">
@@ -164,14 +164,14 @@ export default async function HomePage() {
               <Link
                 key={category.itemId}
                 href={`/categorias/${category.slug || category.itemId}`}
-                className="h-full"
+                className="flex h-full"
               >
-                <Card className="group h-full overflow-hidden hover:shadow-md transition-all duration-200 hover:-translate-y-0.5">
-                  <CardContent className="flex flex-col items-center justify-center p-6 text-center h-full">
+                <Card className="group flex flex-col w-full h-full overflow-hidden hover:shadow-md transition-all duration-200 hover:-translate-y-0.5">
+                  <CardContent className="flex flex-col items-center justify-center flex-1 p-6 text-center">
                     <div className="mb-3 w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors flex-shrink-0">
                       <span className="text-2xl">📦</span>
                     </div>
-                    <h3 className="font-medium group-hover:text-primary transition-colors text-sm">
+                    <h3 className="font-medium group-hover:text-primary transition-colors text-sm line-clamp-2">
                       {category.nombre}
                     </h3>
                   </CardContent>

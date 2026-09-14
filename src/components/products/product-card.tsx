@@ -130,7 +130,6 @@ export function ProductCard({ product, index = 99 }: ProductCardProps) {
         {/* Botón — mt-auto lo empuja SIEMPRE al fondo, sin importar cuánto contenido haya arriba */}
         <Button
           className="mt-auto w-full"
-          size="sm"
           disabled={isOutOfStock}
           onClick={() => addItem(product)}
         >

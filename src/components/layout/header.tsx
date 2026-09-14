@@ -125,7 +125,7 @@ export function Header() {
             <Button
               variant="ghost"
               size="icon"
-              className="lg:hidden"
+              className="lg:hidden h-10 w-10"
               onClick={() => setMobileSearchOpen((v) => !v)}
               aria-label="Buscar"
             >
@@ -134,7 +134,7 @@ export function Header() {
             </Button>
 
             {/* Usuario */}
-            <Button variant="ghost" size="icon" asChild>
+            <Button variant="ghost" size="icon" className="h-10 w-10" asChild>
               <Link href="/cuenta">
                 <User className="h-5 w-5" />
                 <span className="sr-only">Mi cuenta</span>
@@ -145,7 +145,7 @@ export function Header() {
             <Button
               variant="ghost"
               size="icon"
-              className="relative"
+              className="relative h-10 w-10"
               onClick={openCart}
               aria-label={`Carrito${displayItems > 0 ? `, ${displayItems} productos` : ''}`}
             >
@@ -164,7 +164,7 @@ export function Header() {
             {/* Menú móvil */}
             <Sheet>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className="md:hidden">
+                <Button variant="ghost" size="icon" className="md:hidden h-10 w-10">
                   <Menu className="h-5 w-5" />
                   <span className="sr-only">Menú</span>
                 </Button>

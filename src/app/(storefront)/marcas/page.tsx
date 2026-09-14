@@ -66,14 +66,15 @@ export default async function MarcasPage() {
           <p className="text-lg">No hay marcas disponibles</p>
         </div>
       ) : (
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 items-stretch">
           {brands.map((brand) => (
             <Link
               key={brand.itemId}
               href={`/marcas/${brand.slug || brand.itemId}`}
+              className="flex"
             >
-              <Card className="group overflow-hidden hover:shadow-md transition-all hover:-translate-y-0.5">
-                <div className="relative aspect-square bg-muted overflow-hidden">
+              <Card className="group flex flex-col w-full overflow-hidden hover:shadow-md transition-all hover:-translate-y-0.5">
+                <div className="relative aspect-square bg-muted overflow-hidden flex-shrink-0">
                   {brand.logoUrl ? (
                     <Image
                       src={brand.logoUrl}
@@ -89,8 +90,8 @@ export default async function MarcasPage() {
                   )}
                 </div>
 
-                <CardContent className="p-4">
-                  <h2 className="font-semibold group-hover:text-primary transition-colors line-clamp-1">
+                <CardContent className="flex flex-1 flex-col p-4">
+                  <h2 className="font-semibold group-hover:text-primary transition-colors line-clamp-1 text-sm">
                     {brand.nombre}
                   </h2>
                   {brand.descripcion && (

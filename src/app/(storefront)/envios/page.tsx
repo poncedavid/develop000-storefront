@@ -58,8 +58,8 @@ export default function EnviosPage() {
       <div className="prose prose-sm max-w-none space-y-6">
         <section>
           <h2 className="text-xl font-semibold mb-3">Costos de envío</h2>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm border-collapse">
+          <div className="overflow-x-auto rounded-lg border">
+            <table className="w-full text-sm border-collapse min-w-[400px]">
               <thead>
                 <tr className="border-b">
                   <th className="text-left py-2 font-semibold">Zona</th>

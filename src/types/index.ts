@@ -168,6 +168,18 @@ export interface ArticleListResponse {
 }
 
 // ════════════════════════════════════════════════════════════════
+// CUPONES
+// ════════════════════════════════════════════════════════════════
+export interface CuponValidado {
+  valido:            boolean;
+  mensaje:           string;
+  codigo:            string | null;
+  tipo:              'porcentaje' | 'monto_fijo' | null;
+  valor:             number | null;
+  descuentoAplicado: number;
+}
+
+// ════════════════════════════════════════════════════════════════
 // CLIENTE (usuario del storefront)
 // ════════════════════════════════════════════════════════════════
 

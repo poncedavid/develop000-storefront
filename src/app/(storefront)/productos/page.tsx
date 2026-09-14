@@ -154,9 +154,9 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
       </div>
 
       <div className="flex flex-col lg:flex-row gap-8">
-        {/* Sidebar con filtros */}
+        {/* Sidebar con filtros — en mobile va arriba como panel colapsable */}
         <aside className="w-full lg:w-64 flex-shrink-0">
-          <Suspense fallback={<div>Cargando filtros...</div>}>
+          <Suspense fallback={<div className="h-10 rounded-lg bg-muted animate-pulse" />}>
             <ProductFilters categories={categories} />
           </Suspense>
         </aside>

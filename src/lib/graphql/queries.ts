@@ -198,6 +198,22 @@ export const GET_ARTICULO_DETALLE = /* GraphQL */ `
 `;
 
 // ════════════════════════════════════════════════════════════════
+// CUPONES — validación pública (API Key)
+// ════════════════════════════════════════════════════════════════
+export const VALIDAR_CUPON = /* GraphQL */ `
+  query ValidarCupon($companyId: String!, $codigo: String!, $subtotal: Float!) {
+    validarCupon(companyId: $companyId, codigo: $codigo, subtotal: $subtotal) {
+      valido
+      mensaje
+      codigo
+      tipo
+      valor
+      descuentoAplicado
+    }
+  }
+`;
+
+// ════════════════════════════════════════════════════════════════
 // PEDIDOS (requieren auth)
 // ════════════════════════════════════════════════════════════════
 
