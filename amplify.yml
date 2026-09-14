@@ -16,10 +16,9 @@ frontend:
   phases:
     preBuild:
       commands:
-        # Next.js 16 requiere Node.js 22+
+        # Node.js 22 — nvm install busca la última 22.x disponible en el container
+        - nvm install 22
         - nvm use 22
-        - nvm install 22.22.3
-        - nvm use 22.22.3
         - node --version
         - npm ci
     build:
