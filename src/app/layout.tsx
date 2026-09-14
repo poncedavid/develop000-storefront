@@ -1,4 +1,4 @@
-import type { Metadata, Viewport } from 'next';
+import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
 
@@ -30,18 +30,6 @@ export const metadata: Metadata = {
   },
 };
 
-// viewport separado de metadata — Next.js 14+ recomienda exportarlo aparte
-// viewport-fit=cover es necesario para iOS con notch (safe area insets)
-export const viewport: Viewport = {
-  width: 'device-width',
-  initialScale: 1,
-  viewportFit: 'cover',
-  themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#ffffff' },
-    { media: '(prefers-color-scheme: dark)',  color: '#0f172a' },
-  ],
-};
-
 export default function RootLayout({
   children,
 }: {
@@ -49,6 +37,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="es" className={`${inter.variable} antialiased`} suppressHydrationWarning>
+      <head>
+        {/* viewport-fit=cover para iOS safe area — no va en metadata de Next.js 16 */}
+        <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+        <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff" />
+        <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0f172a" />
+      </head>
       <body className="min-h-screen bg-background font-sans">
         {children}
       </body>

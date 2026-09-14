@@ -23,7 +23,9 @@ import {
 } from '@/lib/config';
 import type { ProductListResponse, Product } from '@/types';
 
-export const revalidate = REVALIDATE_PRODUCTS;
+// Next.js requiere un literal estático — no puede evaluar variables importadas en build time
+// El valor real viene de REVALIDATE_PRODUCTS = 60 en lib/config.ts
+export const revalidate = 60;
 
 interface ProductPageProps {
   params: Promise<{ slug: string }>;
