@@ -24,9 +24,22 @@ Storefront público e-commerce. Tienda Next.js para los clientes finales de deve
 | Auth | API Key (`NEXT_PUBLIC_API_KEY` en `.env.local`) |
 | Company ID | `develop000` (en `NEXT_PUBLIC_COMPANY_ID`) |
 
-## CI/CD
+## CI/CD — Deploy en Amplify Hosting
 
-El storefront NO tiene pipeline configurado aún — se deploya manual.
+`amplify.yml` ya existe y está configurado:
+- Build: `npm run build`
+- Output: `.next` (SSR/ISR — **NO** `output: 'export'`)
+- Node: 22.22.3
+- Cache: `node_modules/**/*` + `.next/cache/**/*`
+
+**Variables de entorno requeridas en Amplify Console:**
+```
+NEXT_PUBLIC_GRAPHQL_URL   = https://dn7fsdqh2bh7rli5ozcrh7hmfi.appsync-api.us-east-1.amazonaws.com/graphql
+NEXT_PUBLIC_API_KEY       = da2-q7hbl5jarvbrraqwyyiuobznym   # vence 2027-09-14
+NEXT_PUBLIC_COMPANY_ID    = develop000
+NEXT_PUBLIC_SITE_URL      = https://tu-dominio.amplifyapp.com
+```
+
 Rama de trabajo: `develop`. Rama de producción: `master`.
 
 ---
@@ -142,6 +155,59 @@ Tiempos configurados en `lib/config.ts`:
 - Categorías: 300s (5 min)
 - Banners: 120s
 
+### 6. Metadata y viewport — patrón correcto Next.js 14+
+
+```tsx
+// app/layout.tsx — exportar metadata y viewport por separado
+import type { Metadata, Viewport } from 'next';
+
+export const metadata: Metadata = {
+  title: { default: 'develop000 | Tu tienda online', template: '%s | develop000' },
+  description: '...',
+  openGraph: { locale: 'es_CL', ... },
+};
+
+// viewport separado — requerido para viewport-fit=cover en iOS
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  viewportFit: 'cover',   // necesario para safe-area en móvil
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#ffffff' },
+    { media: '(prefers-color-scheme: dark)',  color: '#0f172a' },
+  ],
+};
+```
+
+**⚠️ Titles en páginas internas:** usar solo el título sin el sufijo, el template lo completa:
+```tsx
+// ✅ Correcto — el template agrega " | develop000"
+export const metadata = { title: 'Productos', description: '...' };
+
+// ❌ Incorrecto — resulta en "Productos | develop000 | develop000"
+export const metadata = { title: 'Productos | develop000', description: '...' };
+```
+
+### 7. Imágenes — LCP y lazy loading
+
+```tsx
+// ProductCard — los primeros 4 productos son above-the-fold (priority para LCP)
+// ProductGrid pasa el índice:
+{products.map((product, index) => (
+  <ProductCard key={product.itemId} product={product} index={index} />
+))}
+
+// ProductCard usa el índice:
+<Image
+  src={product.imagenUrl}
+  alt={product.nombre}
+  fill
+  sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+  priority={index < 4}           // above-the-fold → LCP
+  loading={index < 4 ? undefined : 'lazy'}  // resto → lazy
+/>
+```
+
 ---
 
 ## Queries públicas disponibles (API Key)
@@ -222,6 +288,7 @@ NEXT_PUBLIC_COMPANY_ID=develop000
 NEXT_PUBLIC_COGNITO_USER_POOL_ID=us-east-1_ZmmEzsSub
 NEXT_PUBLIC_COGNITO_CLIENT_ID=2ht4v4gb7iedu9533l2l7rc9bs
 NEXT_PUBLIC_COGNITO_REGION=us-east-1
+NEXT_PUBLIC_SITE_URL=http://localhost:3000   # en prod: URL de Amplify
 ```
 
 **La API Key vence en 2027-09-14.** Renovar con:

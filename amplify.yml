@@ -1,0 +1,39 @@
+version: 1
+
+# develop000-storefront — Next.js 16 con SSR/ISR en Amplify Hosting
+#
+# Amplify detecta Next.js automáticamente y crea lambdas para SSR/ISR.
+# NO usar `output: 'export'` en next.config.ts — el storefront usa ISR
+# (revalidate en páginas) que requiere runtime de servidor.
+#
+# Variables de entorno requeridas en Amplify Console:
+#   NEXT_PUBLIC_GRAPHQL_URL   — URL de AppSync
+#   NEXT_PUBLIC_API_KEY       — API Key pública (vence 2027-09-14)
+#   NEXT_PUBLIC_COMPANY_ID    — develop000
+#   NEXT_PUBLIC_SITE_URL      — URL del dominio en producción (para metadataBase)
+
+frontend:
+  phases:
+    preBuild:
+      commands:
+        # Next.js 16 requiere Node.js 22+
+        - nvm use 22
+        - nvm install 22.22.3
+        - nvm use 22.22.3
+        - node --version
+        - npm ci
+    build:
+      commands:
+        - npm run build
+
+  artifacts:
+    # Next.js con SSR: Amplify usa el output de .next/ directamente
+    # (no dist/ como en export estático)
+    baseDirectory: .next
+    files:
+      - '**/*'
+
+  cache:
+    paths:
+      - node_modules/**/*
+      - .next/cache/**/*   # Cache del compilador Next.js — reduce builds de ~2min a ~30s

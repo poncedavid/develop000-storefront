@@ -60,7 +60,7 @@ export async function generateMetadata({ params }: ProductPageProps) {
   if (!product) return { title: 'Producto no encontrado' };
 
   return {
-    title: `${product.nombre} | develop000`,
+    title: product.nombre,
     description: product.descripcion || `Compra ${product.nombre} al mejor precio`,
     openGraph: {
       title: product.nombre,

@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
 
@@ -28,6 +28,18 @@ export const metadata: Metadata = {
     index: true,
     follow: true,
   },
+};
+
+// viewport separado de metadata — Next.js 14+ recomienda exportarlo aparte
+// viewport-fit=cover es necesario para iOS con notch (safe area insets)
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  viewportFit: 'cover',
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#ffffff' },
+    { media: '(prefers-color-scheme: dark)',  color: '#0f172a' },
+  ],
 };
 
 export default function RootLayout({

@@ -105,7 +105,7 @@ export function CartSheet() {
                             className="h-8 w-8"
                             onClick={() =>
                               updateQuantity(
-                                item.product.id,
+                                item.product.itemId,
                                 item.quantity - 1
                               )
                             }
@@ -121,7 +121,7 @@ export function CartSheet() {
                             className="h-8 w-8"
                             onClick={() =>
                               updateQuantity(
-                                item.product.id,
+                                item.product.itemId,
                                 item.quantity + 1
                               )
                             }
@@ -134,7 +134,7 @@ export function CartSheet() {
                           variant="ghost"
                           size="icon"
                           className="h-8 w-8 text-muted-foreground hover:text-destructive"
-                          onClick={() => removeItem(item.product.id)}
+                          onClick={() => removeItem(item.product.itemId)}
                         >
                           <Trash2 className="h-4 w-4" />
                         </Button>

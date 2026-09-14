@@ -19,7 +19,7 @@ import type { ProductListResponse, CategoryListResponse, Product, Category } fro
 export const revalidate = REVALIDATE_PRODUCTS;
 
 export const metadata = {
-  title: 'Productos | develop000',
+  title: 'Productos',
   description: 'Explora nuestra colección de productos',
 };
 

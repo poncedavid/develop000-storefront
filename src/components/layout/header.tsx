@@ -7,6 +7,7 @@
 
 import Link from 'next/link';
 import { Search, ShoppingCart, Menu, User } from 'lucide-react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -28,6 +29,13 @@ const navigation = [
 export function Header() {
   const totalItems = useCartStore(selectTotalItems);
   const openCart = useCartStore((s) => s.openCart);
+
+  // Evitar hydration mismatch — el carrito viene de localStorage (solo cliente).
+  // El servidor renderiza 0; el cliente hidrata con el valor real.
+  // Sin este state, React lanza "Hydration failed" porque SSR ≠ cliente.
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
+  const displayItems = mounted ? totalItems : 0;
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -90,14 +98,15 @@ export function Header() {
               size="icon"
               className="relative"
               onClick={openCart}
+              aria-label={`Carrito${displayItems > 0 ? `, ${displayItems} productos` : ''}`}
             >
               <ShoppingCart className="h-5 w-5" />
-              {totalItems > 0 && (
+              {displayItems > 0 && (
                 <Badge
                   variant="destructive"
                   className="absolute -right-1 -top-1 h-5 w-5 rounded-full p-0 text-xs flex items-center justify-center"
                 >
-                  {totalItems > 99 ? '99+' : totalItems}
+                  {displayItems > 99 ? '99+' : displayItems}
                 </Badge>
               )}
               <span className="sr-only">Carrito</span>

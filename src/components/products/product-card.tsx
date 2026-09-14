@@ -17,9 +17,11 @@ import type { Product } from '@/types';
 
 interface ProductCardProps {
   product: Product;
+  /** Índice en el grid — los primeros 4 tienen priority para LCP */
+  index?: number;
 }
 
-export function ProductCard({ product }: ProductCardProps) {
+export function ProductCard({ product, index = 99 }: ProductCardProps) {
   const addItem = useCartStore((s) => s.addItem);
 
   const discount = product.precioComparar
@@ -86,6 +88,10 @@ export function ProductCard({ product }: ProductCardProps) {
               fill
               sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
               className="object-cover transition-transform duration-300 group-hover:scale-105"
+              // Los primeros 4 productos son above-the-fold — carga prioritaria para LCP
+              // El resto lazy para no bloquear recursos
+              priority={index < 4}
+              loading={index < 4 ? undefined : 'lazy'}
             />
           ) : (
             <div className="flex h-full items-center justify-center">
