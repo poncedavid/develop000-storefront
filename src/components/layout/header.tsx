@@ -6,8 +6,9 @@
  */
 
 import Link from 'next/link';
-import { Search, ShoppingCart, Menu, User } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { Search, ShoppingCart, Menu, User, X } from 'lucide-react';
+import { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -27,15 +28,45 @@ const navigation = [
 ];
 
 export function Header() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const totalItems = useCartStore(selectTotalItems);
   const openCart = useCartStore((s) => s.openCart);
 
   // Evitar hydration mismatch — el carrito viene de localStorage (solo cliente).
-  // El servidor renderiza 0; el cliente hidrata con el valor real.
-  // Sin este state, React lanza "Hydration failed" porque SSR ≠ cliente.
   const [mounted, setMounted] = useState(false);
   useEffect(() => { setMounted(true); }, []);
   const displayItems = mounted ? totalItems : 0;
+
+  // Estado de búsqueda — inicializar con el valor actual del query param
+  const [searchQuery, setSearchQuery] = useState('');
+  const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
+
+  // Sincronizar con searchParams cuando cambia la ruta
+  useEffect(() => {
+    setSearchQuery(searchParams.get('buscar') ?? '');
+  }, [searchParams]);
+
+  const handleSearch = useCallback(
+    (query: string) => {
+      const trimmed = query.trim();
+      if (trimmed) {
+        router.push(`/productos?buscar=${encodeURIComponent(trimmed)}`);
+      } else {
+        router.push('/productos');
+      }
+      setMobileSearchOpen(false);
+    },
+    [router]
+  );
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') handleSearch(searchQuery);
+    if (e.key === 'Escape') {
+      setSearchQuery('');
+      setMobileSearchOpen(false);
+    }
+  };
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -64,22 +95,40 @@ export function Header() {
             ))}
           </nav>
 
-          {/* Búsqueda */}
+          {/* Búsqueda Desktop */}
           <div className="hidden flex-1 max-w-md lg:flex">
             <div className="relative w-full">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground pointer-events-none" />
               <Input
                 type="search"
                 placeholder="Buscar productos..."
-                className="w-full pl-10"
+                className="w-full pl-10 pr-10"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyDown={handleKeyDown}
               />
+              {searchQuery && (
+                <button
+                  onClick={() => { setSearchQuery(''); router.push('/productos'); }}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  aria-label="Limpiar búsqueda"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              )}
             </div>
           </div>
 
           {/* Acciones */}
           <div className="flex items-center gap-2">
             {/* Búsqueda móvil */}
-            <Button variant="ghost" size="icon" className="lg:hidden">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="lg:hidden"
+              onClick={() => setMobileSearchOpen((v) => !v)}
+              aria-label="Buscar"
+            >
               <Search className="h-5 w-5" />
               <span className="sr-only">Buscar</span>
             </Button>
@@ -137,6 +186,33 @@ export function Header() {
           </div>
         </div>
       </div>
+
+      {/* Buscador móvil expandible */}
+      {mobileSearchOpen && (
+        <div className="lg:hidden border-t bg-background px-4 py-2">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground pointer-events-none" />
+            <Input
+              type="search"
+              placeholder="Buscar productos..."
+              className="w-full pl-10 pr-10"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={handleKeyDown}
+              autoFocus
+            />
+            {searchQuery && (
+              <button
+                onClick={() => { setSearchQuery(''); router.push('/productos'); setMobileSearchOpen(false); }}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                aria-label="Limpiar búsqueda"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Cart Sheet (drawer lateral) */}
       <CartSheet />

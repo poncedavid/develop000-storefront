@@ -35,51 +35,51 @@ export function ProductCard({ product, index = 99 }: ProductCardProps) {
   const productUrl = `/productos/${product.slug || product.itemId}`;
 
   return (
-    <Card className="group relative overflow-hidden border-0 shadow-sm hover:shadow-md transition-shadow">
+    // flex flex-col h-full → todas las cards crecen igual en el grid
+    <Card className="group relative flex flex-col overflow-hidden shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-0.5">
       {/* Badges */}
       <div className="absolute top-3 left-3 z-10 flex flex-col gap-1">
         {discount > 0 && (
-          <Badge variant="destructive" className="font-semibold">
+          <Badge variant="destructive" className="font-semibold text-xs">
             -{discount}%
           </Badge>
         )}
         {isLowStock && (
-          <Badge variant="secondary" className="bg-orange-100 text-orange-700">
+          <Badge className="bg-orange-100 text-orange-700 hover:bg-orange-100 text-xs">
             ¡Últimas unidades!
           </Badge>
         )}
         {isOutOfStock && (
-          <Badge variant="secondary" className="bg-gray-100 text-gray-600">
+          <Badge variant="secondary" className="text-xs">
             Agotado
           </Badge>
         )}
       </div>
 
       {/* Acciones rápidas (aparecen en hover) */}
-      <div className="absolute top-3 right-3 z-10 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+      <div className="absolute top-3 right-3 z-10 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
         <Button
-          variant="secondary"
+          variant="outline"
           size="icon"
-          className="h-8 w-8 rounded-full shadow-md"
+          className="h-8 w-8 rounded-full bg-background shadow-md border"
+          aria-label="Agregar a favoritos"
         >
           <Heart className="h-4 w-4" />
-          <span className="sr-only">Agregar a favoritos</span>
         </Button>
         <Button
-          variant="secondary"
+          variant="outline"
           size="icon"
-          className="h-8 w-8 rounded-full shadow-md"
+          className="h-8 w-8 rounded-full bg-background shadow-md border"
           asChild
         >
-          <Link href={productUrl}>
+          <Link href={productUrl} aria-label="Ver detalles">
             <Eye className="h-4 w-4" />
-            <span className="sr-only">Ver detalles</span>
           </Link>
         </Button>
       </div>
 
-      {/* Imagen */}
-      <Link href={productUrl} className="block">
+      {/* Imagen — no participa en flex column */}
+      <Link href={productUrl} className="block flex-shrink-0">
         <div className="relative aspect-square overflow-hidden bg-muted">
           {product.imagenUrl ? (
             <Image
@@ -88,47 +88,49 @@ export function ProductCard({ product, index = 99 }: ProductCardProps) {
               fill
               sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
               className="object-cover transition-transform duration-300 group-hover:scale-105"
-              // Los primeros 4 productos son above-the-fold — carga prioritaria para LCP
-              // El resto lazy para no bloquear recursos
               priority={index < 4}
               loading={index < 4 ? undefined : 'lazy'}
             />
           ) : (
-            <div className="flex h-full items-center justify-center">
-              <ShoppingCart className="h-12 w-12 text-muted-foreground/50" />
+            <div className="flex h-full items-center justify-center bg-muted">
+              <ShoppingCart className="h-12 w-12 text-muted-foreground/30" />
             </div>
           )}
         </div>
       </Link>
 
-      <CardContent className="p-4">
-        {/* Nombre */}
-        <Link href={productUrl}>
-          <h3 className="font-medium line-clamp-2 hover:text-primary transition-colors min-h-[2.5rem]">
+      {/* Content — flex-1 para que ocupe el espacio restante */}
+      <CardContent className="flex flex-1 flex-col p-4 gap-2">
+        {/* Nombre — line-clamp-2 garantiza mismo alto siempre */}
+        <Link href={productUrl} className="flex-shrink-0">
+          <h3 className="font-medium line-clamp-2 leading-snug hover:text-primary transition-colors text-sm min-h-[2.5rem]">
             {product.nombre}
           </h3>
         </Link>
 
         {/* Precios */}
-        <div className="mt-2 flex items-baseline gap-2">
-          <span className="text-lg font-bold">
+        <div className="flex items-baseline gap-2 flex-shrink-0">
+          <span className="text-base font-bold">
             {formatPrice(product.precio)}
           </span>
           {product.precioComparar && product.precioComparar > product.precio && (
-            <span className="text-sm text-muted-foreground line-through">
+            <span className="text-xs text-muted-foreground line-through">
               {formatPrice(product.precioComparar)}
             </span>
           )}
         </div>
 
-        {/* SKU (opcional, comentar si no se quiere mostrar) */}
+        {/* SKU */}
         {product.sku && (
-          <p className="mt-1 text-xs text-muted-foreground">SKU: {product.sku}</p>
+          <p className="text-xs text-muted-foreground flex-shrink-0">
+            SKU: {product.sku}
+          </p>
         )}
 
-        {/* Botón agregar al carrito */}
+        {/* Botón — mt-auto lo empuja SIEMPRE al fondo, sin importar cuánto contenido haya arriba */}
         <Button
-          className="mt-4 w-full"
+          className="mt-auto w-full"
+          size="sm"
           disabled={isOutOfStock}
           onClick={() => addItem(product)}
         >

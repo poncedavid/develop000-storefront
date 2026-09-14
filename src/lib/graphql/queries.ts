@@ -102,9 +102,7 @@ export const GET_CATEGORIA_DETALLE = /* GraphQL */ `
 `;
 
 // ════════════════════════════════════════════════════════════════
-// MARCAS
-// ════════════════════════════════════════════════════════════════
-
+// MARCAS — nueva sección con más queries
 export const LISTAR_MARCAS = /* GraphQL */ `
   query ListarMarcas($companyId: String!, $nextToken: String, $limit: Int) {
     listarMarcas(companyId: $companyId, nextToken: $nextToken, limit: $limit) {
@@ -122,6 +120,79 @@ export const LISTAR_MARCAS = /* GraphQL */ `
       }
       nextToken
       total
+    }
+  }
+`;
+
+// ════════════════════════════════════════════════════════════════
+// BANNERS
+// ════════════════════════════════════════════════════════════════
+export const LISTAR_BANNERS = /* GraphQL */ `
+  query ListarBanners($companyId: String!, $nextToken: String, $limit: Int) {
+    listarBanners(companyId: $companyId, nextToken: $nextToken, limit: $limit) {
+      items {
+        id
+        sort
+        itemId
+        companyId
+        titulo
+        descripcion
+        imagenUrl
+        url
+        orden
+        activo
+        createdAt
+      }
+      nextToken
+      total
+    }
+  }
+`;
+
+// ════════════════════════════════════════════════════════════════
+// ARTÍCULOS (blog)
+// ════════════════════════════════════════════════════════════════
+export const LISTAR_ARTICULOS = /* GraphQL */ `
+  query ListarArticulos($companyId: String!, $nextToken: String, $limit: Int) {
+    listarArticulos(companyId: $companyId, nextToken: $nextToken, limit: $limit) {
+      items {
+        id
+        sort
+        itemId
+        companyId
+        titulo
+        resumen
+        slug
+        imagenUrl
+        autor
+        estado
+        publishedAt
+        activo
+        createdAt
+      }
+      nextToken
+      total
+    }
+  }
+`;
+
+export const GET_ARTICULO_DETALLE = /* GraphQL */ `
+  query GetArticuloDetalle($id: String!, $sort: String!) {
+    getArticuloDetalle(id: $id, sort: $sort) {
+      id
+      sort
+      itemId
+      companyId
+      titulo
+      contenido
+      resumen
+      slug
+      imagenUrl
+      autor
+      estado
+      publishedAt
+      activo
+      createdAt
     }
   }
 `;

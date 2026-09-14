@@ -98,6 +98,76 @@ export interface Order {
 }
 
 // ════════════════════════════════════════════════════════════════
+// MARCAS
+// ════════════════════════════════════════════════════════════════
+export interface Brand {
+  id: string;
+  sort: string;
+  itemId: string;
+  companyId: string;
+  nombre: string;
+  descripcion?: string;
+  slug?: string;
+  logoUrl?: string;
+  activo: boolean;
+  createdAt: string;
+}
+export interface BrandListResponse {
+  items: Brand[];
+  nextToken?: string | null;
+  total?: number;
+}
+
+// ════════════════════════════════════════════════════════════════
+// BANNERS
+// ════════════════════════════════════════════════════════════════
+export interface Banner {
+  id: string;
+  sort: string;
+  itemId: string;
+  companyId: string;
+  titulo: string;
+  descripcion?: string;
+  imagenUrl: string;
+  url?: string;
+  orden?: number;
+  fechaInicio?: string;
+  fechaFin?: string;
+  activo: boolean;
+  createdAt: string;
+}
+export interface BannerListResponse {
+  items: Banner[];
+  nextToken?: string | null;
+  total?: number;
+}
+
+// ════════════════════════════════════════════════════════════════
+// ARTÍCULOS (blog)
+// ════════════════════════════════════════════════════════════════
+export interface Article {
+  id: string;
+  sort: string;
+  itemId: string;
+  companyId: string;
+  titulo: string;
+  contenido: string;
+  resumen?: string;
+  slug?: string;
+  imagenUrl?: string;
+  autor?: string;
+  estado?: string;
+  publishedAt?: string;
+  activo: boolean;
+  createdAt: string;
+}
+export interface ArticleListResponse {
+  items: Article[];
+  nextToken?: string | null;
+  total?: number;
+}
+
+// ════════════════════════════════════════════════════════════════
 // CLIENTE (usuario del storefront)
 // ════════════════════════════════════════════════════════════════
 

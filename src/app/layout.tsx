@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
+import { AmplifyProvider } from '@/lib/auth/amplify-provider';
 import './globals.css';
 
 const inter = Inter({
@@ -44,7 +45,9 @@ export default function RootLayout({
         <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0f172a" />
       </head>
       <body className="min-h-screen bg-background font-sans">
-        {children}
+        <AmplifyProvider>
+          {children}
+        </AmplifyProvider>
       </body>
     </html>
   );
