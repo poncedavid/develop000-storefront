@@ -56,8 +56,8 @@ export function ProductCard({ product, index = 99 }: ProductCardProps) {
         )}
       </div>
 
-      {/* Acciones rápidas (aparecen en hover) */}
-      <div className="absolute top-3 right-3 z-10 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+      {/* Acciones rápidas — solo en desktop (hover no existe en touch) */}
+      <div className="absolute top-3 right-3 z-10 hidden sm:flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
         <Button
           variant="outline"
           size="icon"
@@ -127,14 +127,21 @@ export function ProductCard({ product, index = 99 }: ProductCardProps) {
           </p>
         )}
 
-        {/* Botón — mt-auto lo empuja SIEMPRE al fondo, sin importar cuánto contenido haya arriba */}
+        {/* Botón — mt-auto lo empuja SIEMPRE al fondo
+            Mobile: sin ícono para que el texto no se corte
+            Desktop: con ícono */}
         <Button
           className="mt-auto w-full"
           disabled={isOutOfStock}
           onClick={() => addItem(product)}
         >
-          <ShoppingCart className="mr-2 h-4 w-4" />
-          {isOutOfStock ? 'Sin stock' : 'Agregar al carrito'}
+          <ShoppingCart className="hidden sm:inline mr-2 h-4 w-4" />
+          {isOutOfStock ? 'Sin stock' : (
+            <>
+              <span className="sm:hidden">Al carrito</span>
+              <span className="hidden sm:inline">Agregar al carrito</span>
+            </>
+          )}
         </Button>
       </CardContent>
     </Card>

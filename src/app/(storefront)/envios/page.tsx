@@ -16,37 +16,37 @@ export default function EnviosPage() {
         Todo lo que necesitas saber sobre cómo despachamos tus pedidos.
       </p>
 
-      <div className="grid gap-6 sm:grid-cols-2 mb-10">
-        <Card>
-          <CardContent className="flex items-start gap-4 pt-6">
-            <Truck className="h-6 w-6 text-primary mt-0.5" />
+      <div className="grid gap-6 sm:grid-cols-2 mb-10 items-stretch">
+        <Card className="flex flex-col">
+          <CardContent className="flex flex-1 items-start gap-4 pt-6">
+            <Truck className="h-6 w-6 text-primary mt-0.5 flex-shrink-0" />
             <div>
               <p className="font-semibold">Envío gratis</p>
               <p className="text-sm text-muted-foreground">En compras sobre $50.000 a todo Chile.</p>
             </div>
           </CardContent>
         </Card>
-        <Card>
-          <CardContent className="flex items-start gap-4 pt-6">
-            <Clock className="h-6 w-6 text-primary mt-0.5" />
+        <Card className="flex flex-col">
+          <CardContent className="flex flex-1 items-start gap-4 pt-6">
+            <Clock className="h-6 w-6 text-primary mt-0.5 flex-shrink-0" />
             <div>
               <p className="font-semibold">Tiempos de entrega</p>
               <p className="text-sm text-muted-foreground">RM: 1-2 días hábiles. Regiones: 3-5 días hábiles.</p>
             </div>
           </CardContent>
         </Card>
-        <Card>
-          <CardContent className="flex items-start gap-4 pt-6">
-            <MapPin className="h-6 w-6 text-primary mt-0.5" />
+        <Card className="flex flex-col">
+          <CardContent className="flex flex-1 items-start gap-4 pt-6">
+            <MapPin className="h-6 w-6 text-primary mt-0.5 flex-shrink-0" />
             <div>
               <p className="font-semibold">Cobertura</p>
               <p className="text-sm text-muted-foreground">Despachamos a todo Chile continental.</p>
             </div>
           </CardContent>
         </Card>
-        <Card>
-          <CardContent className="flex items-start gap-4 pt-6">
-            <Package className="h-6 w-6 text-primary mt-0.5" />
+        <Card className="flex flex-col">
+          <CardContent className="flex flex-1 items-start gap-4 pt-6">
+            <Package className="h-6 w-6 text-primary mt-0.5 flex-shrink-0" />
             <div>
               <p className="font-semibold">Embalaje seguro</p>
               <p className="text-sm text-muted-foreground">Todos los productos son embalados con cuidado para llegar en perfecto estado.</p>
