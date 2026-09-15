@@ -102,9 +102,9 @@ export function ProductCard({ product, index = 99 }: ProductCardProps) {
           </h3>
         </Link>
 
-        {/* Precios */}
+        {/* Precios + WishlistButton en mobile */}
         <div className="flex items-baseline gap-2 flex-shrink-0">
-          <span className="text-base font-bold">
+          <span className="text-base font-bold flex-1">
             {formatPrice(product.precio)}
           </span>
           {product.precioComparar && product.precioComparar > product.precio && (
@@ -112,6 +112,10 @@ export function ProductCard({ product, index = 99 }: ProductCardProps) {
               {formatPrice(product.precioComparar)}
             </span>
           )}
+          {/* Favorito visible siempre en mobile, oculto en sm+ (donde está en hover) */}
+          <div className="sm:hidden flex-shrink-0">
+            <WishlistButton product={product} size="sm" />
+          </div>
         </div>
 
         {/* SKU */}

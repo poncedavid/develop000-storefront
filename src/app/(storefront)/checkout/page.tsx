@@ -158,22 +158,20 @@ export default function CheckoutPage() {
         sku:        product.sku ?? null,
       }));
 
-      const notas = [
-        `Dirección: ${form.direccion}, ${form.ciudad}, ${form.region}`,
-        form.telefono ? `Tel: ${form.telefono}` : null,
-        form.comentario ? `Nota: ${form.comentario}` : null,
-        cuponAplicado ? `Cupón: ${cuponAplicado.codigo}` : null,
-      ].filter(Boolean).join(' | ');
-
       const input = {
-        companyId:     COMPANY_ID,
-        emailCliente:  form.email,
-        nombreCliente: `${form.nombre} ${form.apellido}`.trim(),
-        items:         JSON.stringify(pedidoItems),  // DynamoDB espera string para arrays en CatalogoInput
+        companyId:       COMPANY_ID,
+        emailCliente:    form.email,
+        nombreCliente:   form.nombre,
+        apellidoCliente: form.apellido,
+        telefonoCliente: form.telefono,
+        direccionEnvio:  form.direccion,
+        ciudadEnvio:     form.ciudad,
+        regionEnvio:     form.region,
+        items:           JSON.stringify(pedidoItems),
         subtotal,
         descuento,
         total,
-        notas,
+        notas: form.comentario || null,
       };
 
       // Usar privateQuery si hay token, publicQuery si es invitado

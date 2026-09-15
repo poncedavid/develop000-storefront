@@ -8,7 +8,7 @@
 import { useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { LogOut, User, Package, Mail, ShieldCheck } from 'lucide-react';
+import { LogOut, User, Package, Mail, ShieldCheck, Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -18,6 +18,7 @@ import {
   selectUserEmail,
   selectUserName,
 } from '@/lib/auth/auth-store';
+import { useWishlistStore, selectWishlistCount } from '@/lib/store/wishlist-store';
 
 export default function CuentaPage() {
   const router          = useRouter();
@@ -27,6 +28,7 @@ export default function CuentaPage() {
   const isChecked       = useAuthStore((s) => s.isChecked);
   const checkSession    = useAuthStore((s) => s.checkSession);
   const logout          = useAuthStore((s) => s.logout);
+  const wishlistCount   = useWishlistStore(selectWishlistCount);
 
   // Verificar sesión al montar
   useEffect(() => {
@@ -91,6 +93,34 @@ export default function CuentaPage() {
                 </p>
               </div>
             </div>
+          </CardContent>
+        </Card>
+
+        {/* Favoritos */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-base">
+              <Heart className="h-5 w-5 text-red-500" />
+              Mis favoritos
+              {wishlistCount > 0 && (
+                <span className="ml-auto text-sm font-normal text-muted-foreground">
+                  {wishlistCount} {wishlistCount === 1 ? 'producto' : 'productos'}
+                </span>
+              )}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-muted-foreground mb-3">
+              {wishlistCount > 0
+                ? `Tienes ${wishlistCount} ${wishlistCount === 1 ? 'producto guardado' : 'productos guardados'}.`
+                : 'Guarda tus productos favoritos para comprarlos después.'}
+            </p>
+            <Button variant="outline" size="sm" asChild>
+              <Link href="/cuenta/favoritos">
+                <Heart className="h-4 w-4 mr-2" />
+                Ver mis favoritos
+              </Link>
+            </Button>
           </CardContent>
         </Card>
 
