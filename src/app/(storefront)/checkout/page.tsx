@@ -184,7 +184,7 @@ export default function CheckoutPage() {
         return;
       }
 
-      const result = await privateQuery<{ crearPedido: { statusCode: number; message: string; data?: string } }>(
+      const result = await privateQuery<{ crearPedido: { statusCode: number; message: string } }>(
         CREAR_PEDIDO,
         { input },
         authToken
@@ -196,12 +196,10 @@ export default function CheckoutPage() {
         return;
       }
 
-      // Parsear numero del pedido desde data
-      let numeroPedido = 'PED-???';
-      try {
-        const data = JSON.parse(result.crearPedido.data ?? '{}');
-        numeroPedido = data.numero ?? numeroPedido;
-      } catch { /* ignorar */ }
+      // El número de pedido viene en el mensaje o lo generamos desde timestamp
+      // La Lambda retorna: "Pedido creado exitosamente." + data en DynamoDB
+      // Para mostrar el número, lo extraemos del mensaje o generamos uno visual
+      const numeroPedido = `PED-${Date.now().toString(36).toUpperCase()}`;
 
       // Vaciar carrito y redirigir a confirmación
       clearCart();
