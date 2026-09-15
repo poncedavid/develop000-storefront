@@ -10,8 +10,9 @@ const footerLinks = {
   tienda: [
     { name: 'Productos', href: '/productos' },
     { name: 'Categorías', href: '/categorias' },
+    { name: 'Marcas', href: '/marcas' },
     { name: 'Ofertas', href: '/productos?ofertas=true' },
-    { name: 'Novedades', href: '/productos?nuevos=true' },
+    { name: 'Blog', href: '/blog' },
   ],
   ayuda: [
     { name: 'Contacto', href: '/contacto' },

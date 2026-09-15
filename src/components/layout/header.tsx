@@ -24,6 +24,7 @@ const navigation = [
   { name: 'Inicio', href: '/' },
   { name: 'Productos', href: '/productos' },
   { name: 'Categorías', href: '/categorias' },
+  { name: 'Blog', href: '/blog' },
   { name: 'Ofertas', href: '/productos?ofertas=true' },
 ];
 
