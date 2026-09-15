@@ -168,6 +168,27 @@ export interface ArticleListResponse {
 }
 
 // ════════════════════════════════════════════════════════════════
+// FAVORITOS
+// ════════════════════════════════════════════════════════════════
+export interface Favorito {
+  sort:              string;
+  itemId:            string;
+  companyId:         string;
+  clienteId:         string;
+  productoId:        string;
+  productoNombre:    string | null;
+  productoSlug:      string | null;
+  productoImagenUrl: string | null;
+  productoPrecio:    number | null;
+  createdAt:         string;
+}
+export interface FavoritoListResponse {
+  items:     Favorito[];
+  nextToken: string | null;
+  total:     number;
+}
+
+// ════════════════════════════════════════════════════════════════
 // CUPONES
 // ════════════════════════════════════════════════════════════════
 export interface CuponValidado {

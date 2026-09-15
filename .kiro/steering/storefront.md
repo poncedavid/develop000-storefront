@@ -4,6 +4,79 @@ inclusion: always
 
 # Proyecto develop000-storefront
 
+## Filosofía de desarrollo — Nivel Producción
+
+Este proyecto sigue estándares de ingeniería de software de nivel universitario avanzado.
+Cada decisión técnica debe estar justificada por principios de diseño, no por conveniencia.
+
+### Principios que guían cada implementación
+
+1. **Optimistic UI** — La interfaz responde inmediatamente. Nunca esperes al backend para actualizar la UI. Si el backend falla, revierte con feedback al usuario.
+
+2. **Single Source of Truth** — Cada dato tiene un único origen. No duplicar estado entre componentes, stores ni URL params.
+
+3. **Separation of Concerns** — Server Components fetean datos, Client Components manejan interactividad. Nunca mezclar.
+
+4. **Fail Fast, Recover Gracefully** — Validar en el borde, manejar errores con UI amigable (toast, rollback, retry).
+
+5. **Progressive Enhancement** — Funcionar sin JS cuando sea posible (ISR/SSG). La interactividad es una mejora, no un requisito.
+
+6. **DRY + Composition** — Reutilizar patterns, no copiar código. Un componente hace una cosa bien.
+
+### Patrones de estado obligatorios
+
+```
+Estado global persistente  → Zustand + persist (localStorage)
+Estado de servidor         → React cache + ISR
+Estado local del componente → useState/useReducer
+Estado de URL              → searchParams (filtros, paginación)
+```
+
+### Patrón Optimistic UI — OBLIGATORIO para mutaciones
+
+```typescript
+// ✅ Correcto — UI responde en ~0ms, backend en background
+const toggle = async (itemId: string) => {
+  // 1. Actualizar estado local PRIMERO (optimistic)
+  const wasLiked = state.has(itemId);
+  wasLiked ? state.delete(itemId) : state.add(itemId);
+  
+  // 2. Persistir en localStorage inmediatamente
+  persist();
+  
+  // 3. Si autenticado → sincronizar con backend en background
+  if (isAuthenticated) {
+    try {
+      await backend.toggle(itemId);
+    } catch {
+      // 4. Rollback si falla
+      wasLiked ? state.add(itemId) : state.delete(itemId);
+      toast.error('No se pudo guardar. Intenta de nuevo.');
+    }
+  }
+};
+
+// ❌ Incorrecto — esperar al backend antes de actualizar UI
+const toggle = async (itemId: string) => {
+  await backend.toggle(itemId); // el usuario ve lag
+  setState(...);
+};
+```
+
+### Sincronización anónimo → autenticado
+
+Cuando un usuario anónimo se loguea, sus acciones locales deben sincronizarse:
+
+```typescript
+// En auth-store — al completar login exitoso
+await Promise.all([
+  wishlistStore.syncFromBackend(),  // merge local + remoto
+  cartStore.syncFromBackend(),      // sincronizar carrito si aplica
+]);
+```
+
+---
+
 ## Qué es
 
 Storefront público e-commerce. Tienda Next.js para los clientes finales de develop000.
@@ -311,3 +384,68 @@ develop000 tiene su propia wiki separada (NO usar `agent-wiki` que es de Zenda):
 ├── logs/YYYY/MM/DD.md
 └── lessons/
 ```
+
+---
+
+## Módulo Favoritos (Wishlist) — Arquitectura
+
+### Flujo completo
+
+```
+Usuario presiona Heart en ProductCard
+  ↓
+1. UI responde INMEDIATAMENTE (optimistic update)
+   wishlist-store.toggle(product.itemId)
+   → Heart relleno/vacío al instante
+   → Persiste en localStorage ('develop000-wishlist')
+  ↓
+2. ¿Está autenticado? (checkea auth-store)
+   ├── NO  → queda solo en localStorage
+   │          Al hacer login → syncFromBackend() automático
+   └── SÍ  → llama al backend en background
+              crearFavorito / eliminarFavorito
+              Si falla → rollback + toast de error
+```
+
+### Store (wishlist-store.ts)
+
+```typescript
+interface WishlistState {
+  items:    Set<string>;          // Set de itemIds
+  synced:   boolean;              // true = sincronizado con backend
+  toggle:   (itemId: string, product: Product) => Promise<void>;
+  isLiked:  (itemId: string) => boolean;
+  syncFromBackend: () => Promise<void>;
+  hydrate:  () => void;           // cargar desde localStorage al montar
+}
+```
+
+### Reglas de negocio
+
+- **Sin sesión**: solo localStorage, no llamar al backend
+- **Al login**: `merge(localStorage, backend)` — localStorage tiene prioridad si hay conflicto
+- **Al logout**: limpiar `items` en memoria, NO en localStorage (por si vuelve offline)
+- **Rollback**: si la llamada al backend falla, revertir el estado local con toast
+
+### Endpoints backend requeridos
+
+| Operación | Auth | Query/Mutation |
+|-----------|------|----------------|
+| Agregar favorito | Cognito | `mutation crearFavorito` |
+| Quitar favorito | Cognito | `mutation eliminarFavorito` |
+| Listar favoritos | Cognito | `query listarFavoritos` |
+
+### Componente WishlistButton
+
+```tsx
+// Solo visible en desktop (sm:flex) — en mobile no hay hover
+// Estado visual: Heart relleno (rojo) = liked, vacío = not liked
+// Accesibilidad: aria-label dinámico
+<WishlistButton product={product} />
+```
+
+### Página /cuenta/favoritos
+
+- Requiere auth — redirige a `/login?returnUrl=/cuenta/favoritos` si no autenticado
+- Muestra grid de ProductCards de los productos favoritos
+- Si localStorage tiene items no sincronizados → sync automático al cargar

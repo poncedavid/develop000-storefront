@@ -7,11 +7,12 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { ShoppingCart, Heart, Eye } from 'lucide-react';
+import { ShoppingCart, Eye } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useCartStore } from '@/lib/store/cart-store';
+import { WishlistButton } from '@/components/wishlist/wishlist-button';
 import { formatPrice, calculateDiscount } from '@/lib/utils/format';
 import type { Product } from '@/types';
 
@@ -58,14 +59,7 @@ export function ProductCard({ product, index = 99 }: ProductCardProps) {
 
       {/* Acciones rápidas — solo en desktop (hover no existe en touch) */}
       <div className="absolute top-3 right-3 z-10 hidden sm:flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-        <Button
-          variant="outline"
-          size="icon"
-          className="h-8 w-8 rounded-full bg-background shadow-md border"
-          aria-label="Agregar a favoritos"
-        >
-          <Heart className="h-4 w-4" />
-        </Button>
+        <WishlistButton product={product} size="sm" />
         <Button
           variant="outline"
           size="icon"

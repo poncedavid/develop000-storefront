@@ -214,6 +214,48 @@ export const VALIDAR_CUPON = /* GraphQL */ `
 `;
 
 // ════════════════════════════════════════════════════════════════
+// FAVORITOS — requieren Cognito (datos privados por cliente)
+// ════════════════════════════════════════════════════════════════
+export const LISTAR_FAVORITOS = /* GraphQL */ `
+  query ListarFavoritos($companyId: String!, $nextToken: String, $limit: Int) {
+    listarFavoritos(companyId: $companyId, nextToken: $nextToken, limit: $limit) {
+      items {
+        sort
+        itemId
+        companyId
+        clienteId
+        productoId
+        productoNombre
+        productoSlug
+        productoImagenUrl
+        productoPrecio
+        createdAt
+      }
+      nextToken
+      total
+    }
+  }
+`;
+
+export const CREAR_FAVORITO = /* GraphQL */ `
+  mutation CrearFavorito($input: CatalogoInput!) {
+    crearFavorito(input: $input) {
+      statusCode
+      message
+    }
+  }
+`;
+
+export const ELIMINAR_FAVORITO = /* GraphQL */ `
+  mutation EliminarFavorito($input: CatalogoInput!) {
+    eliminarFavorito(input: $input) {
+      statusCode
+      message
+    }
+  }
+`;
+
+// ════════════════════════════════════════════════════════════════
 // PEDIDOS (requieren auth)
 // ════════════════════════════════════════════════════════════════
 

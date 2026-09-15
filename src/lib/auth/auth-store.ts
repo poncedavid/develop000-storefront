@@ -15,6 +15,8 @@ import {
   resendSignUpCode,
   type AuthUser,
 } from 'aws-amplify/auth';
+// Import lazy para evitar circular dependency — wishlist-store importa de auth indirectamente
+import { useWishlistStore } from '@/lib/store/wishlist-store';
 
 interface AuthState {
   user:      AuthUser | null;
@@ -61,6 +63,12 @@ export const useAuthStore = create<AuthState>((set) => ({
       const user  = await getCurrentUser();
       const attrs = await fetchUserAttributes();
       set({ user, email: attrs.email ?? null, nombre: attrs.name ?? null });
+
+      // Sincronizar favoritos localStorage → backend en background
+      // No bloquea el login — fire-and-forget
+      useWishlistStore.getState().syncFromBackend().catch(() => {
+        // Si falla la sync, no es crítico — localStorage sigue disponible
+      });
     } finally {
       set({ isLoading: false });
     }
@@ -101,6 +109,9 @@ export const useAuthStore = create<AuthState>((set) => ({
   logout: async () => {
     await signOut();
     set({ user: null, email: null, nombre: null });
+    // Limpiar favoritos de memoria al cerrar sesión
+    // (no borra localStorage — el usuario puede tener favoritos offline)
+    useWishlistStore.getState().clearMemory();
   },
 }));
 

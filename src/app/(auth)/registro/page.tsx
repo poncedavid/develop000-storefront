@@ -38,7 +38,7 @@ export default function RegistroPage() {
     setError(null);
 
     if (password.length < 8) {
-      setError('La contraseña debe tener al menos 8 caracteres.');
+      setError('La contraseña debe tener al menos 8 caracteres, una mayúscula, un número y un símbolo (ej: Test123!).');
       return;
     }
 
@@ -213,6 +213,9 @@ export default function RegistroPage() {
                 {showPass ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
               </button>
             </div>
+            <p className="text-xs text-muted-foreground mt-1">
+              Mínimo 8 caracteres con mayúscula, número y símbolo (ej: Test123!)
+            </p>
           </div>
 
           {error && (
