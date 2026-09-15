@@ -264,6 +264,7 @@ export const CREAR_PEDIDO = /* GraphQL */ `
     crearPedido(input: $input) {
       statusCode
       message
+      data
     }
   }
 `;

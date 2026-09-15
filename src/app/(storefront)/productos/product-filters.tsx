@@ -66,8 +66,8 @@ export function ProductFilters({ categories }: ProductFiltersProps) {
 
   const filterContent = (
     <div className="space-y-5">
-      {/* Búsqueda */}
-      <div>
+      {/* Búsqueda — solo en mobile (en desktop está en el header) */}
+      <div className="lg:hidden">
         <h4 className="font-medium text-sm mb-2">Buscar</h4>
         <Input
           type="search"
@@ -76,6 +76,13 @@ export function ProductFilters({ categories }: ProductFiltersProps) {
           onChange={(e) => updateParams('buscar', e.target.value || null)}
         />
       </div>
+
+      {currentBuscar && (
+        <div className="hidden lg:block bg-muted/50 rounded-md px-3 py-2 text-sm flex items-center justify-between">
+          <span className="text-muted-foreground">Buscando: <strong className="text-foreground">{currentBuscar}</strong></span>
+          <button onClick={() => updateParams('buscar', null)} className="text-muted-foreground hover:text-foreground ml-2" aria-label="Limpiar búsqueda">✕</button>
+        </div>
+      )}
 
       <Separator />
 
