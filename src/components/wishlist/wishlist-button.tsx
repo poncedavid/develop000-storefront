@@ -15,9 +15,10 @@
  */
 
 import { useState, useCallback, useEffect } from 'react';
-import { Heart } from 'lucide-react';
-import { useWishlistStore }  from '@/lib/store/wishlist-store';
-import type { Product }      from '@/types';
+import { Heart }                from 'lucide-react';
+import { toast }                from 'sonner';
+import { useWishlistStore }     from '@/lib/store/wishlist-store';
+import type { Product }         from '@/types';
 
 interface WishlistButtonProps {
   product:   Product;
@@ -53,6 +54,12 @@ export function WishlistButton({ product, size = 'sm', className = '' }: Wishlis
 
       try {
         await toggle(product);
+        // Toast de feedback (el estado ya cambió optimísticamente)
+        if (!displayLiked) {
+          toast.success(`${product.nombre}`, { description: 'Agregado a favoritos', icon: '❤️' });
+        } else {
+          toast.info(`${product.nombre}`, { description: 'Eliminado de favoritos' });
+        }
       } catch {
         // El store ya hizo rollback — solo mostramos feedback visual
         setError(true);

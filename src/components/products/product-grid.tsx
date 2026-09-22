@@ -1,6 +1,6 @@
 /**
  * Product Grid - Grid responsivo de productos
- * Con skeleton loading y estado vacío
+ * Con skeleton loading, estado vacío y soporte para vista en lista
  */
 
 import { ProductCard } from './product-card';
@@ -8,16 +8,20 @@ import { ProductCardSkeleton } from './product-card-skeleton';
 import { ShoppingBag } from 'lucide-react';
 import type { Product } from '@/types';
 
+type ViewMode = 'grid' | 'list';
+
 interface ProductGridProps {
-  products: Product[];
-  loading?: boolean;
+  products:     Product[];
+  loading?:     boolean;
   emptyMessage?: string;
+  viewMode?:    ViewMode;
 }
 
 export function ProductGrid({
   products,
   loading = false,
   emptyMessage = 'No se encontraron productos',
+  viewMode = 'grid',
 }: ProductGridProps) {
   // Loading state
   if (loading) {
@@ -45,7 +49,23 @@ export function ProductGrid({
     );
   }
 
-  // Grid de productos
+  // Vista en lista
+  if (viewMode === 'list') {
+    return (
+      <div className="flex flex-col gap-3">
+        {products.map((product, index) => (
+          <ProductCard
+            key={product.itemId}
+            product={product}
+            index={index}
+            viewMode="list"
+          />
+        ))}
+      </div>
+    );
+  }
+
+  // Vista en cuadrícula (default)
   return (
     <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 items-stretch">
       {products.map((product, index) => (

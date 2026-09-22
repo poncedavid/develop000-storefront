@@ -4,8 +4,9 @@
  */
 
 import { Suspense } from 'react';
-import { ProductGrid } from '@/components/products/product-grid';
 import { ProductFilters } from './product-filters';
+import { ProductsCatalogClient } from './products-catalog-client';
+import { Breadcrumbs } from '@/components/ui/breadcrumbs';
 import { publicQuery } from '@/lib/graphql/client';
 import { LISTAR_PRODUCTOS, LISTAR_CATEGORIAS } from '@/lib/graphql/queries';
 import {
@@ -145,12 +146,15 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
 
   return (
     <div className="container mx-auto px-4 py-8">
+      {/* Breadcrumbs */}
+      <Breadcrumbs
+        items={[{ label: 'Productos' }]}
+        className="mb-4"
+      />
+
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold">Productos</h1>
-        <p className="text-muted-foreground mt-1">
-          {products.length} productos encontrados
-        </p>
       </div>
 
       <div className="flex flex-col lg:flex-row gap-8">
@@ -161,9 +165,9 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
           </Suspense>
         </aside>
 
-        {/* Grid de productos */}
+        {/* Grid de productos con toolbar (toggle grid/lista) */}
         <div className="flex-1">
-          <ProductGrid products={products} />
+          <ProductsCatalogClient products={products} />
         </div>
       </div>
     </div>

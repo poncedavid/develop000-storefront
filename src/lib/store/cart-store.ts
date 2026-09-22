@@ -6,6 +6,7 @@
 
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { toast } from 'sonner';
 import type { Product, CartItem } from '@/types';
 
 // ════════════════════════════════════════════════════════════════
@@ -49,12 +50,16 @@ export const useCartStore = create<CartStore>()(
       // ── Acciones ───────────────────────────────────────────────
       addItem: (product, quantity = 1) => {
         set((state) => {
-          // Usar itemId (UUID único) como identificador — id es el PK de DynamoDB y no es único por producto
           const existingItem = state.items.find(
             (item) => item.product.itemId === product.itemId
           );
 
           if (existingItem) {
+            // Toast: cantidad actualizada
+            toast.success(`${product.nombre}`, {
+              description: `Cantidad actualizada a ${existingItem.quantity + quantity}`,
+              icon: '🛒',
+            });
             return {
               items: state.items.map((item) =>
                 item.product.itemId === product.itemId
@@ -65,6 +70,11 @@ export const useCartStore = create<CartStore>()(
             };
           }
 
+          // Toast: producto agregado
+          toast.success(`${product.nombre}`, {
+            description: 'Agregado al carrito',
+            icon: '🛒',
+          });
           return {
             items: [...state.items, { product, quantity }],
             isOpen: true,
@@ -73,6 +83,10 @@ export const useCartStore = create<CartStore>()(
       },
 
       removeItem: (productId) => {
+        const item = get().items.find(i => i.product.itemId === productId);
+        if (item) {
+          toast.info(`${item.product.nombre}`, { description: 'Eliminado del carrito' });
+        }
         set((state) => ({
           items: state.items.filter((item) => item.product.itemId !== productId),
         }));

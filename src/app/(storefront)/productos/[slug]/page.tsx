@@ -6,12 +6,16 @@
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowLeft, ShoppingCart, Truck, Shield, RotateCcw } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { ShoppingCart, Truck, Shield, RotateCcw } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Card, CardContent } from '@/components/ui/card';
 import { AddToCartButton } from './add-to-cart-button';
+import { ProductImageCarousel } from '@/components/products/product-image-carousel';
+import { Breadcrumbs } from '@/components/ui/breadcrumbs';
+import { ShareButton } from '@/components/ui/share-button';
+import { RecentlyViewedTracker } from '@/components/products/recently-viewed-tracker';
+import { RecentlyViewedSection } from '@/components/products/recently-viewed-section';
 import { publicQuery } from '@/lib/graphql/client';
 import { LISTAR_PRODUCTOS } from '@/lib/graphql/queries';
 import { formatPrice, calculateDiscount } from '@/lib/utils/format';
@@ -99,39 +103,31 @@ export default async function ProductPage({ params }: ProductPageProps) {
   const isOutOfStock = product.stock !== undefined && product.stock <= 0;
   const isLowStock   = product.stock !== undefined && product.stock > 0 && product.stock <= 5;
 
+  // Construir array de imágenes (por ahora solo imagenUrl, fácil de ampliar)
+  const images = [product.imagenUrl].filter(Boolean) as string[];
+
   return (
     <div className="container mx-auto px-4 py-8">
-      {/* Breadcrumb / Back link */}
-      <div className="mb-6">
-        <Button variant="ghost" size="sm" asChild>
-          <Link href="/productos">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Volver a productos
-          </Link>
-        </Button>
-      </div>
+      {/* Rastrear producto visto recientemente (client component invisible) */}
+      <RecentlyViewedTracker product={product} />
+
+      {/* Breadcrumbs */}
+      <Breadcrumbs
+        items={[
+          { label: 'Productos', href: '/productos' },
+          { label: product.nombre },
+        ]}
+        className="mb-6"
+      />
 
       {/* Producto principal */}
       <div className="grid gap-8 lg:grid-cols-2">
-        {/* Imagen */}
-        <div className="relative aspect-square overflow-hidden rounded-xl bg-muted">
-          {product.imagenUrl ? (
-            <Image
-              src={product.imagenUrl}
-              alt={product.nombre}
-              fill
-              sizes="(max-width: 1024px) 100vw, 50vw"
-              className="object-cover"
-              priority
-            />
-          ) : (
-            <div className="flex h-full items-center justify-center">
-              <ShoppingCart className="h-24 w-24 text-muted-foreground/30" />
-            </div>
-          )}
+        {/* Carousel de imágenes (con zoom y thumbnails) */}
+        <div className="relative">
+          <ProductImageCarousel images={images} productName={product.nombre} />
 
-          {/* Badges sobre la imagen */}
-          <div className="absolute top-4 left-4 flex flex-col gap-2">
+          {/* Badges de oferta/stock — posicionados sobre el carousel */}
+          <div className="absolute top-4 left-4 flex flex-col gap-2 z-10 pointer-events-none">
             {discount > 0 && (
               <Badge variant="destructive" className="text-sm font-semibold">
                 -{discount}% OFF
@@ -155,8 +151,15 @@ export default async function ProductPage({ params }: ProductPageProps) {
             <p className="text-sm text-muted-foreground">SKU: {product.sku}</p>
           )}
 
-          {/* Nombre */}
-          <h1 className="text-3xl font-bold mt-2">{product.nombre}</h1>
+          {/* Nombre + Share */}
+          <div className="flex items-start justify-between gap-4 mt-2">
+            <h1 className="text-3xl font-bold">{product.nombre}</h1>
+            <ShareButton
+              title={product.nombre}
+              text={product.descripcion || `Mira este producto: ${product.nombre}`}
+              className="flex-shrink-0 mt-1"
+            />
+          </div>
 
           {/* Precios */}
           <div className="mt-4 flex items-baseline gap-3">
@@ -238,6 +241,9 @@ export default async function ProductPage({ params }: ProductPageProps) {
           </div>
         </section>
       )}
+
+      {/* Vistos recientemente (client component — lee localStorage) */}
+      <RecentlyViewedSection currentItemId={product.itemId} />
     </div>
   );
 }

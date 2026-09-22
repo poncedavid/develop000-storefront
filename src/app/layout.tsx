@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
+import { Toaster } from 'sonner';
 import { AmplifyProvider } from '@/lib/auth/amplify-provider';
 import './globals.css';
 
@@ -47,6 +48,18 @@ export default function RootLayout({
       <body className="min-h-screen bg-background font-sans">
         <AmplifyProvider>
           {children}
+          {/* Sonner toast notifications — posición bottom-right, tema sistema */}
+          <Toaster
+            position="bottom-right"
+            richColors
+            closeButton
+            duration={3000}
+            toastOptions={{
+              classNames: {
+                toast: 'font-sans text-sm',
+              },
+            }}
+          />
         </AmplifyProvider>
       </body>
     </html>

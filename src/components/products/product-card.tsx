@@ -20,9 +20,11 @@ interface ProductCardProps {
   product: Product;
   /** Índice en el grid — los primeros 4 tienen priority para LCP */
   index?: number;
+  /** Modo de visualización: cuadrícula (default) o lista */
+  viewMode?: 'grid' | 'list';
 }
 
-export function ProductCard({ product, index = 99 }: ProductCardProps) {
+export function ProductCard({ product, index = 99, viewMode = 'grid' }: ProductCardProps) {
   const addItem = useCartStore((s) => s.addItem);
 
   const discount = product.precioComparar
@@ -35,6 +37,88 @@ export function ProductCard({ product, index = 99 }: ProductCardProps) {
 
   const productUrl = `/productos/${product.slug || product.itemId}`;
 
+  // ─── Vista en lista ──────────────────────────────────────────────────────
+  if (viewMode === 'list') {
+    return (
+      <Card className="flex flex-row overflow-hidden shadow-sm hover:shadow-md transition-all duration-200">
+        {/* Imagen cuadrada pequeña */}
+        <Link href={productUrl} className="flex-shrink-0">
+          <div className="relative h-24 w-24 sm:h-32 sm:w-32 bg-muted">
+            {product.imagenUrl ? (
+              <Image
+                src={product.imagenUrl}
+                alt={product.nombre}
+                fill
+                sizes="128px"
+                className="object-cover"
+                priority={index < 4}
+                loading={index < 4 ? undefined : 'lazy'}
+              />
+            ) : (
+              <div className="flex h-full items-center justify-center bg-muted">
+                <ShoppingCart className="h-8 w-8 text-muted-foreground/30" />
+              </div>
+            )}
+          </div>
+        </Link>
+
+        {/* Contenido */}
+        <CardContent className="flex flex-1 items-center gap-4 p-3 sm:p-4">
+          <div className="flex-1 min-w-0">
+            {/* Badges */}
+            <div className="flex flex-wrap gap-1 mb-1">
+              {discount > 0 && (
+                <Badge variant="destructive" className="text-xs">-{discount}%</Badge>
+              )}
+              {isLowStock && (
+                <Badge className="bg-orange-100 text-orange-700 hover:bg-orange-100 text-xs">¡Últimas!</Badge>
+              )}
+              {isOutOfStock && (
+                <Badge variant="secondary" className="text-xs">Agotado</Badge>
+              )}
+            </div>
+
+            <Link href={productUrl}>
+              <h3 className="font-medium line-clamp-1 hover:text-primary transition-colors">
+                {product.nombre}
+              </h3>
+            </Link>
+
+            {product.descripcion && (
+              <p className="text-xs text-muted-foreground line-clamp-1 mt-0.5 hidden sm:block">
+                {product.descripcion}
+              </p>
+            )}
+
+            <div className="flex items-baseline gap-2 mt-1">
+              <span className="font-bold text-primary">{formatPrice(product.precio)}</span>
+              {product.precioComparar && product.precioComparar > product.precio && (
+                <span className="text-xs text-muted-foreground line-through">
+                  {formatPrice(product.precioComparar)}
+                </span>
+              )}
+            </div>
+          </div>
+
+          {/* Acciones */}
+          <div className="flex flex-col sm:flex-row items-center gap-2 flex-shrink-0">
+            <WishlistButton product={product} size="sm" />
+            <Button
+              size="sm"
+              disabled={isOutOfStock}
+              onClick={() => addItem(product)}
+              className="whitespace-nowrap"
+            >
+              <ShoppingCart className="hidden sm:inline mr-2 h-4 w-4" />
+              {isOutOfStock ? 'Sin stock' : 'Agregar'}
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  // ─── Vista en cuadrícula (default) ───────────────────────────────────────
   return (
     // flex flex-col h-full → todas las cards crecen igual en el grid
     <Card className="group relative flex flex-col overflow-hidden shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-0.5">
