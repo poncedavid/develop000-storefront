@@ -22,6 +22,7 @@ export interface Product {
   categoriaId?: string;
   marcaId?: string;
   imagenUrl?: string;
+  imagenes?:  string[];   // Array de URLs — primera imagen = portada
   activo: boolean;
   createdAt: string;
   updatedAt?: string;

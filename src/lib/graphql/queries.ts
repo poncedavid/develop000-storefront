@@ -25,6 +25,7 @@ export const LISTAR_PRODUCTOS = /* GraphQL */ `
         categoriaId
         marcaId
         imagenUrl
+        imagenes
         activo
         createdAt
         updatedAt

@@ -103,8 +103,8 @@ export default async function ProductPage({ params }: ProductPageProps) {
   const isOutOfStock = product.stock !== undefined && product.stock <= 0;
   const isLowStock   = product.stock !== undefined && product.stock > 0 && product.stock <= 5;
 
-  // Construir array de imágenes (por ahora solo imagenUrl, fácil de ampliar)
-  const images = [product.imagenUrl].filter(Boolean) as string[];
+  // Construir array de imágenes: usar imagenes[] si existe, fallback a imagenUrl
+  const images = (product.imagenes?.length ? product.imagenes : [product.imagenUrl]).filter(Boolean) as string[];
 
   return (
     <div className="container mx-auto px-4 py-8">
