@@ -26,7 +26,7 @@ export function ProductGrid({
   // Loading state
   if (loading) {
     return (
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4">
         {Array.from({ length: 10 }).map((_, i) => (
           <ProductCardSkeleton key={i} />
         ))}
@@ -67,7 +67,7 @@ export function ProductGrid({
 
   // Vista en cuadrícula (default)
   return (
-    <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 items-stretch">
+    <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 items-stretch">
       {products.map((product, index) => (
         <ProductCard key={product.itemId} product={product} index={index} />
       ))}
