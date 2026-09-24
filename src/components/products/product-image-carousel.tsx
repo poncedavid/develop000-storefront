@@ -137,7 +137,7 @@ export function ProductImageCarousel({
             <button
               onClick={scrollPrev}
               disabled={selectedIndex === 0}
-              className="absolute left-3 top-1/2 -translate-y-1/2 flex h-9 w-9 items-center justify-center rounded-full bg-background/80 shadow-md backdrop-blur-sm border transition-all hover:bg-background disabled:opacity-30 z-10"
+              className="absolute left-2 top-1/2 -translate-y-1/2 flex h-11 w-11 items-center justify-center rounded-full bg-background/80 shadow-md backdrop-blur-sm border transition-all hover:bg-background disabled:opacity-30 z-10"
               aria-label="Imagen anterior"
             >
               <ChevronLeft className="h-5 w-5" />
@@ -145,26 +145,31 @@ export function ProductImageCarousel({
             <button
               onClick={scrollNext}
               disabled={selectedIndex === images.length - 1}
-              className="absolute right-3 top-1/2 -translate-y-1/2 flex h-9 w-9 items-center justify-center rounded-full bg-background/80 shadow-md backdrop-blur-sm border transition-all hover:bg-background disabled:opacity-30 z-10"
+              className="absolute right-2 top-1/2 -translate-y-1/2 flex h-11 w-11 items-center justify-center rounded-full bg-background/80 shadow-md backdrop-blur-sm border transition-all hover:bg-background disabled:opacity-30 z-10"
               aria-label="Imagen siguiente"
             >
               <ChevronRight className="h-5 w-5" />
             </button>
 
-            {/* Dots */}
-            <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
+            {/* Dots — área de toque mínima 44px */}
+            <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1 z-10">
               {images.map((_, i) => (
                 <button
                   key={i}
                   onClick={() => scrollTo(i)}
                   className={cn(
-                    'h-1.5 rounded-full transition-all',
+                    'h-6 rounded-full transition-all flex items-center justify-center',
                     i === selectedIndex
-                      ? 'w-5 bg-primary'
-                      : 'w-1.5 bg-background/60 hover:bg-background/90'
+                      ? 'w-6 bg-primary'
+                      : 'w-6 bg-background/60 hover:bg-background/90'
                   )}
                   aria-label={`Ver imagen ${i + 1}`}
-                />
+                >
+                  <span className={cn(
+                    'rounded-full transition-all pointer-events-none',
+                    i === selectedIndex ? 'w-5 h-1.5 bg-primary' : 'w-1.5 h-1.5 bg-current'
+                  )} />
+                </button>
               ))}
             </div>
           </>

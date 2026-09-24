@@ -74,8 +74,8 @@ export function Header() {
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between gap-4">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground font-bold">
+          <Link href="/" className="flex items-center gap-2 min-h-[44px]">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground font-bold shrink-0">
               D
             </div>
             <span className="hidden font-semibold sm:inline-block">
@@ -121,12 +121,12 @@ export function Header() {
           </div>
 
           {/* Acciones */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1">
             {/* Búsqueda móvil */}
             <Button
               variant="ghost"
               size="icon"
-              className="lg:hidden h-10 w-10"
+              className="lg:hidden h-11 w-11"
               onClick={() => setMobileSearchOpen((v) => !v)}
               aria-label="Buscar"
             >
@@ -135,7 +135,7 @@ export function Header() {
             </Button>
 
             {/* Usuario */}
-            <Button variant="ghost" size="icon" className="h-10 w-10" asChild>
+            <Button variant="ghost" size="icon" className="h-11 w-11" asChild>
               <Link href="/cuenta">
                 <User className="h-5 w-5" />
                 <span className="sr-only">Mi cuenta</span>
@@ -146,7 +146,7 @@ export function Header() {
             <Button
               variant="ghost"
               size="icon"
-              className="relative h-10 w-10"
+              className="relative h-11 w-11"
               onClick={openCart}
               aria-label={`Carrito${displayItems > 0 ? `, ${displayItems} productos` : ''}`}
             >
@@ -165,7 +165,7 @@ export function Header() {
             {/* Menú móvil */}
             <Sheet>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className="md:hidden h-10 w-10">
+                <Button variant="ghost" size="icon" className="md:hidden h-11 w-11">
                   <Menu className="h-5 w-5" />
                   <span className="sr-only">Menú</span>
                 </Button>
@@ -176,7 +176,7 @@ export function Header() {
                     <Link
                       key={item.name}
                       href={item.href}
-                      className="text-lg font-medium transition-colors hover:text-primary"
+                      className="text-lg font-medium py-2 transition-colors hover:text-primary"
                     >
                       {item.name}
                     </Link>
