@@ -46,8 +46,14 @@ export function ProductImageCarousel({
 
   useEffect(() => {
     if (!emblaApi) return;
+    // Inicializar índice en el primer render
+    onSelect();
     emblaApi.on('select', onSelect);
-    return () => { emblaApi.off('select', onSelect); };
+    emblaApi.on('reInit', onSelect);
+    return () => {
+      emblaApi.off('select', onSelect);
+      emblaApi.off('reInit', onSelect);
+    };
   }, [emblaApi, onSelect]);
 
   const scrollTo = useCallback(
@@ -86,7 +92,7 @@ export function ProductImageCarousel({
       <div
         className="relative aspect-square rounded-xl overflow-hidden bg-muted cursor-zoom-in group"
         onMouseEnter={() => setIsZoomed(true)}
-        onMouseLeave={() => setIsZoomed(false)}
+        onMouseLeave={() => { setIsZoomed(false); setZoomPos({ x: 50, y: 50 }); }}
         onMouseMove={handleMouseMove}
         aria-label={`Imagen de ${productName}`}
       >
