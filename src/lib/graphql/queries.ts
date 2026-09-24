@@ -9,7 +9,7 @@
 
 export const LISTAR_PRODUCTOS = /* GraphQL */ `
   query ListarProductos($companyId: String!, $nextToken: String, $limit: Int) {
-    listarProductos(companyId: $companyId, nextToken: $nextToken, limit: $limit) {
+    listarProductos(companyId: $companyId, nextToken: $nextToken, limit: $limit, soloActivos: true) {
       items {
         id
         sort
