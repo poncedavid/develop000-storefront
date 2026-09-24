@@ -209,21 +209,16 @@ export function ProductCard({ product, index = 99, viewMode = 'grid' }: ProductC
           </p>
         )}
 
-        {/* Botón — mt-auto lo empuja SIEMPRE al fondo
-            Mobile: sin ícono para que el texto no se corte
-            Desktop: con ícono */}
+        {/* Botón — mt-auto lo empuja SIEMPRE al fondo */}
         <Button
-          className="mt-auto w-full"
+          className="mt-auto w-full gap-2"
           disabled={isOutOfStock}
           onClick={() => addItem(product)}
         >
-          <ShoppingCart className="hidden sm:inline mr-2 h-4 w-4" />
-          {isOutOfStock ? 'Sin stock' : (
-            <>
-              <span className="sm:hidden">Al carrito</span>
-              <span className="hidden sm:inline">Agregar al carrito</span>
-            </>
-          )}
+          <ShoppingCart className="h-4 w-4 shrink-0" />
+          <span className="truncate">
+            {isOutOfStock ? 'Sin stock' : 'Agregar al carrito'}
+          </span>
         </Button>
       </CardContent>
     </Card>

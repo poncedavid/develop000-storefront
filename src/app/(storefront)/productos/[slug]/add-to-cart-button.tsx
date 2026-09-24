@@ -70,10 +70,10 @@ export function AddToCartButton({ product, disabled }: AddToCartButtonProps) {
         </Button>
       </div>
 
-      {/* Botón agregar — w-full en mobile, flex-1 en sm+ */}
+      {/* Botón agregar — w-full en mobile, max-w-xs en sm+ */}
       <Button
         size="lg"
-        className="w-full sm:flex-1 h-12 px-6 gap-2"
+        className="w-full sm:flex-1 sm:max-w-xs h-12 px-6 gap-2"
         onClick={handleAddToCart}
         disabled={disabled || isAdded}
       >
