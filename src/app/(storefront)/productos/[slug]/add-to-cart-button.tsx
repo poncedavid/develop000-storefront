@@ -73,21 +73,21 @@ export function AddToCartButton({ product, disabled }: AddToCartButtonProps) {
       {/* Botón agregar — w-full en mobile, flex-1 en sm+ */}
       <Button
         size="lg"
-        className="w-full sm:flex-1 h-12 min-w-0"
+        className="w-full sm:flex-1 h-12 px-6 gap-2"
         onClick={handleAddToCart}
         disabled={disabled || isAdded}
       >
         {isAdded ? (
           <>
-            <Check className="mr-2 h-5 w-5 shrink-0" />
-            <span className="truncate">¡Agregado!</span>
+            <Check className="h-5 w-5 shrink-0" />
+            ¡Agregado!
           </>
         ) : disabled ? (
-          <span className="truncate">Sin stock</span>
+          'Sin stock'
         ) : (
           <>
-            <ShoppingCart className="mr-2 h-5 w-5 shrink-0" />
-            <span className="truncate">Agregar al carrito</span>
+            <ShoppingCart className="h-5 w-5 shrink-0" />
+            Agregar al carrito
           </>
         )}
       </Button>
